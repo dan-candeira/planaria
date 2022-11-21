@@ -4,7 +4,15 @@ const io = require("socket.io")(http);
 const port = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
-	res.sendFile(__dirname + "/index.html");
+	res.sendFile(__dirname + "/dist/index.html");
+});
+
+app.get("/new-game", (req, res) => {
+	res.sendFile(__dirname + "/dist/new-game/index.html");
+});
+
+app.get("/vote", (req, res) => {
+	res.sendFile(__dirname + "/dist/vote/index.html");
 });
 
 io.on("connection", (socket) => {
