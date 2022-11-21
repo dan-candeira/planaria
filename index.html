@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Planaria</title>
+		<style>
+			body,
+			html {
+				height: 100%;
+				margin: 0;
+				position: sticky;
+			}
+
+			.hidden {
+				visibility: hidden;
+			}
+
+			h1 {
+				margin: 0;
+			}
+
+			.overlay {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: rgba(0, 0, 0, 0.5);
+				z-index: 2;
+				min-height: 100vh;
+				width: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<main tabindex="-1">
+			<h1>Planaria</h1>
+			<button id="user-change-button">Change user name</button>
+
+			<div id="user-form-container" class="overlay" tabindex="-1">
+				<form id="user-form">
+					<label for="user-name">
+						<span>Username</span>
+						<input type="text" id="user-name" name="user-name" />
+					</label>
+					<div>
+						<button type="submit">Save</button>
+						<button type="button" id="cancel-user-change">
+							Cancel
+						</button>
+					</div>
+				</form>
+			</div>
+
+			<section>
+				<ul id="user-cards"></ul>
+			</section>
+		</main>
+		<script src="/socket.io/socket.io.js"></script>
+
+		<script>
+			const socket = io();
+			const user = localStorage.getItem("planaria-user");
+
+			const userFormContainer = document.getElementById(
+				"user-form-container"
+			);
+			const userForm = document.getElementById("user-form");
+
+			const changeUsername =
+				document.getElementById("user-change-button");
+			const cancelUsernameChange =
+				document.getElementById("cancel-user-change");
+
+			const userInput = document.getElementById("user-name");
+			const users = document.getElementById("user-cards");
+
+			changeUsername.addEventListener("click", () => {
+				userFormContainer.classList.remove("hidden");
+			});
+
+			userForm.addEventListener("submit", function (e) {
+				e.preventDefault();
+				if (userInput.value) {
+					socket.emit("login", userInput.value);
+					localStorage.setItem("planaria-user", userInput.value);
+					userInput.value = "";
+				}
+			});
+
+			cancelUsernameChange.addEventListener("click", () => {
+				userFormContainer.classList.add("hidden");
+			});
+
+			if (user) {
+				socket.emit("login", user);
+			}
+
+			socket.on("login", function (u) {
+				const user = document.createElement("li");
+				user.textContent = u;
+				users.appendChild(user);
+				userFormContainer.classList.add("hidden");
+
+				// window.scrollTo(0, document.body.scrollHeight);
+			});
+		</script>
+	</body>
+</html>
