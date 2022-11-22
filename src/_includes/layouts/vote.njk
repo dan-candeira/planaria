@@ -1,5 +1,17 @@
 {% extends "layouts/base.njk" %}
 
+{% set js %}
+  {% include "js/vote.js" %}
+{% endset %}
+
 {% block content %}
-	
+	<section>
+		<h1>Vote</h1>
+		<button type="button" id="set-username">Set username</button>
+	</section>
+
+	<section>
+		<h2>Users</h2>
+		<ul id="user-list"></ul>
+	</section>
 {% endblock %}
